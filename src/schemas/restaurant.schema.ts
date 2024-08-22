@@ -2,10 +2,10 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export type ResturantDocument = HydratedDocument<Resturant>;
+export type RestaurantDocument = HydratedDocument<Restaurant>;
 
 @Schema({ timestamps: true })
-export class Resturant {
+export class Restaurant {
   @IsString()
   @IsNotEmpty()
   @Prop({ required: true })
@@ -19,16 +19,13 @@ export class Resturant {
   @Prop({ required: true })
   @IsString()
   @IsNotEmpty()
-  image: string
-
-
+  image: string;
 
   @Prop()
-  createdAt?: Date
+  createdAt?: Date;
 
   @Prop()
-  updatedAt?: Date
+  updatedAt?: Date;
 }
 
-
-export const ResturantSchema = SchemaFactory.createForClass(Resturant);
+export const RestaurantSchema = SchemaFactory.createForClass(Restaurant);
