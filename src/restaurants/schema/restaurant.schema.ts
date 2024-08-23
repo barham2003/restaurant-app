@@ -1,25 +1,20 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { HydratedDocument, Types } from 'mongoose';
+import { Owner } from 'src/owners/schema/owner.schema';
 
 export type RestaurantDocument = HydratedDocument<Restaurant>;
 
 @Schema({ timestamps: true })
 export class Restaurant {
-  @IsString()
-  @IsNotEmpty()
   @Prop({ required: true })
   name: string;
 
   @Prop({ required: true })
-  @IsString()
-  @IsNotEmpty()
-  address: string;
+  logo: string;
 
-  @Prop({ required: true })
-  @IsString()
-  @IsNotEmpty()
-  image: string;
+
+  @Prop({ type: Types.ObjectId, ref: "Owner", required: true })
+  owner: Owner;
 
   @Prop()
   createdAt?: Date;

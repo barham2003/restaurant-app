@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { RestaurantsModule } from 'src/restaurants/restaurants.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { OwnersModule } from './owners/owners.module';
 
 @Module({
   imports: [
@@ -18,8 +19,8 @@ import { MongooseModule } from '@nestjs/mongoose';
       }),
       inject: [ConfigService],
     }),
+    OwnersModule,
   ],
-
   controllers: [AppController],
   providers: [AppService],
 })

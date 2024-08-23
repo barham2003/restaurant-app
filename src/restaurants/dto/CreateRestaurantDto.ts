@@ -1,5 +1,19 @@
+import { IsMongoId, IsNotEmpty, IsString } from 'class-validator';
+
 export class CreateRestaurantDto {
-    name: string;
-    image: string;
-    address: string;
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  logo: string;
+
+
+  @IsNotEmpty()
+  @IsMongoId()
+  ownerId: string
+
+
+
 }
