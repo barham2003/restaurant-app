@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateOwnerDto } from './dto/create-owner.dto';
 import { UpdateOwnerDto } from './dto/update-owner.dto';
 import { Model, Types } from 'mongoose';
@@ -16,8 +16,8 @@ export class OwnersService {
   }
 
   async findAll() {
-    const ownerss = await this.ownersModel.find()
-    return ownerss;
+    const owners = await this.ownersModel.find()
+    return owners;
   }
 
   async findOne(id: Types.ObjectId | string) {
@@ -30,15 +30,19 @@ export class OwnersService {
   }
 
   async deleteRestaurant(ownerId: Types.ObjectId | string, restaurantId: Types.ObjectId | string) {
-    console.log("Restaurant", restaurantId)
     await this.ownersModel.findByIdAndUpdate(ownerId, { $pull: { restaurants: restaurantId } })
   }
 
-  update(id: Types.ObjectId, updateOwnersDto: UpdateOwnerDto) {
-    return `This action updates a #${id} owners`;
+  async update(id: Types.ObjectId | string, updateOwnersDto: UpdateOwnerDto) {
+    const updatedOne = await this.ownersModel.findByIdAndUpdate(id, updateOwnersDto)
+    return updatedOne
   }
 
-  remove(id: Types.ObjectId) {
-    return `This action removes a #${id} owners`;
+  async remove(id: Types.ObjectId | string) {
+    const deletedOne = await this.ownersModel.findById(id)
+    if (!deletedOne) throw new NotFoundException()
+    if (deletedOne.restaurants.length > 0) throw new BadRequestException("Delete All his Restaurants First")
+    await this.ownersModel.findById(id)
+    return deletedOne
   }
 }

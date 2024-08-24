@@ -3,14 +3,16 @@ import { RestaurantsService } from './restaurants.service';
 import { RestaurantsController } from './restaurants.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Restaurant, RestaurantSchema } from 'src/restaurants/schema/restaurant.schema';
-import { OwnersModule } from 'src/owners/owners.module';
+import { Item, ItemSchema } from 'src/items/schema/item.schema';
+import { Owner, OwnerSchema } from 'src/owners/schema/owner.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Restaurant.name, schema: RestaurantSchema },
+      { name: Item.name, schema: ItemSchema },
+      { name: Owner.name, schema: OwnerSchema },
     ]),
-    OwnersModule
   ],
   controllers: [RestaurantsController],
   providers: [RestaurantsService],

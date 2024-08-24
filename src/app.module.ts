@@ -5,6 +5,7 @@ import { RestaurantsModule } from 'src/restaurants/restaurants.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { OwnersModule } from './owners/owners.module';
+import { ItemsModule } from './items/items.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { OwnersModule } from './owners/owners.module';
       inject: [ConfigService],
     }),
     OwnersModule,
+    ItemsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

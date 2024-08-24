@@ -1,14 +1,18 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Restaurant, RestaurantDocument } from './schema/restaurant.schema';
 import { Model, Types } from 'mongoose';
 import { CreateRestaurantDto } from './dto/CreateRestaurantDto';
 import { UpdateRestaurantDto } from './dto/UpdateCatDto';
+import { Owner } from 'src/owners/schema/owner.schema';
+import { Item } from 'src/items/schema/item.schema';
 
 @Injectable()
 export class RestaurantsService {
   constructor(
-    @InjectModel(Restaurant.name) private resturantModel: Model<Restaurant>
+    @InjectModel(Restaurant.name) private resturantModel: Model<Restaurant>,
+    @InjectModel(Owner.name) private ownerModel: Model<Owner>,
+    @InjectModel(Item.name) private itemModel: Model<Item>
   ) { }
 
   async getAll() {
@@ -16,23 +20,36 @@ export class RestaurantsService {
   }
 
   async getOne(id: Types.ObjectId | string) {
-    return await this.resturantModel.findById(id).populate("owner", ['username'])
+    const restaurant = await this.resturantModel.findById(id).populate({
+      path: "items",
+      select: ["name", "price"],
+
+    }).exec()
+    return restaurant
   }
 
   async create(createRestaurantDto: CreateRestaurantDto) {
+    const owner = await this.ownerModel.findById(createRestaurantDto.ownerId)
+    if (!owner) throw new NotFoundException('Owner not found',)
     const restaurant = await this.resturantModel.create({ ...createRestaurantDto, owner: createRestaurantDto.ownerId });
+    await this.ownerModel.findByIdAndUpdate(owner._id, { $push: { restaurants: restaurant._id } });
     return restaurant
   }
 
   async delete(id: string | Types.ObjectId): Promise<RestaurantDocument> {
-    const result = await this.resturantModel.findByIdAndDelete(id).populate("owner", ['username', "_id"]);
-    return result;
+    const restaurant = await this.resturantModel.findByIdAndDelete(id)
+    if (!restaurant) throw new NotFoundException("Restaurant Not Found")
+    const ownerId = restaurant.owner._id as string
+    await this.resturantModel.findByIdAndUpdate(ownerId, { $pull: { restaurants: restaurant._id } })
+    await this.itemModel.deleteMany({ restaurant: id })
+    return restaurant;
   }
+
 
 
   async edit(id: string, updateRestaurantDto: UpdateRestaurantDto) {
     const data = await this.resturantModel.findByIdAndUpdate(id, updateRestaurantDto).populate("owner",);
-    if (!data) throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
-    return { message: 'Successfully Updated', statusCode: HttpStatus.OK };
+    if (!data) throw new NotFoundException('Restaurant Not Found');
+    return data
   }
 }

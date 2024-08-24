@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException } from '@nestjs/common';
 import { OwnersService } from './owners.service';
 import { CreateOwnerDto } from './dto/create-owner.dto';
 import { UpdateOwnerDto } from './dto/update-owner.dto';
@@ -12,8 +12,8 @@ export class OwnersController {
   constructor(private readonly ownersService: OwnersService) { }
 
   @Post()
-  create(@Body() createOwnersDto: CreateOwnerDto) {
-    return this.ownersService.create(createOwnersDto);
+  async create(@Body() createOwnersDto: CreateOwnerDto) {
+    return await this.ownersService.create(createOwnersDto);
   }
 
   @Get()
@@ -30,12 +30,15 @@ export class OwnersController {
 
 
   @Patch(':id')
-  update(@Param('id', ParseObjId) id: Types.ObjectId, @Body() updateOwnersDto: UpdateOwnerDto) {
-    return this.ownersService.update(id, updateOwnersDto);
+  async update(@Param('id', ParseObjId) id: Types.ObjectId, @Body() updateOwnersDto: UpdateOwnerDto): ResponseData<null> {
+    const isFound = await this.ownersService.update(id, updateOwnersDto)
+    if (!isFound) throw new NotFoundException()
+    return { message: "Updated" }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: Types.ObjectId) {
-    return this.ownersService.remove(id);
+  async remove(@Param('id') id: Types.ObjectId): ResponseData<null> {
+    await this.ownersService.remove(id);
+    return { message: "Deleted" }
   }
 }
