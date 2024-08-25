@@ -25,6 +25,11 @@ export class OwnersService {
     return owners
   }
 
+  async findOneByUsername(username: string) {
+    const owners = await this.ownersModel.findOne({ username }).populate("restaurants")
+    return owners
+  }
+
   async addRestaurant(ownerId: Types.ObjectId | string, restaurantId: Types.ObjectId | string) {
     await this.ownersModel.findByIdAndUpdate(ownerId, { $push: { restaurants: restaurantId } }, { new: true, runValidators: true })
   }

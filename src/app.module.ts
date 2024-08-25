@@ -6,6 +6,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { OwnersModule } from './owners/owners.module';
 import { ItemsModule } from './items/items.module';
+import { AuthService } from './auth/auth.service';
+import { AuthModule } from './auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -22,8 +25,10 @@ import { ItemsModule } from './items/items.module';
     }),
     OwnersModule,
     ItemsModule,
+    AuthModule,
+    JwtModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AuthService],
 })
 export class AppModule { }

@@ -10,5 +10,6 @@ import { Owner, OwnerSchema } from './schema/owner.schema';
   ],
   controllers: [OwnersController],
   providers: [OwnersService],
+  exports: [OwnersService]
 })
 export class OwnersModule { }
