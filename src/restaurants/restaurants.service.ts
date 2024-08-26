@@ -4,7 +4,7 @@ import { Restaurant, RestaurantDocument } from './schema/restaurant.schema';
 import { Model, Types } from 'mongoose';
 import { CreateRestaurantDto } from './dto/CreateRestaurantDto';
 import { UpdateRestaurantDto } from './dto/UpdateCatDto';
-import { User } from 'src/owners/schema/owner.schema';
+import { User } from 'src/users/schema/user.schema';
 import { Item } from 'src/items/schema/item.schema';
 
 @Injectable()

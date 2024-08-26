@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 import { RestaurantsModule } from 'src/restaurants/restaurants.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { OwnersModule } from './owners/owners.module';
+import { UsersModule } from './users/users.module';
 import { ItemsModule } from './items/items.module';
 import { AuthService } from './auth/auth.service';
 import { AuthModule } from './auth/auth.module';
@@ -23,7 +23,7 @@ import { AuthGuard } from './auth/auth.guard';
       }),
       inject: [ConfigService],
     }),
-    OwnersModule,
+    UsersModule,
     ItemsModule,
     AuthModule,
     JwtModule,

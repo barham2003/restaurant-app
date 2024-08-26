@@ -1,5 +1,6 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document, HydratedDocument, Types } from 'mongoose';
+import { Role } from 'src/auth/roles/roles.enum';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -13,6 +14,9 @@ export class User extends Document {
 
   @Prop({ type: Types.ObjectId, ref: 'Restaurant' })
   restaurants: Types.ObjectId[];
+
+  @Prop({ type: String, default: Role.User })
+  role: string;
 
   @Prop()
   createdAt?: Date;

@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { OwnersService } from 'src/owners/owners.service';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private ownerService: OwnersService,
+    private ownerService: UsersService,
     private jwtSerivce: JwtService) { }
 
   async signin(username: string, pass: string): Promise<any> {
