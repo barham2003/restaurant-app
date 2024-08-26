@@ -4,14 +4,14 @@ import { Restaurant, RestaurantDocument } from './schema/restaurant.schema';
 import { Model, Types } from 'mongoose';
 import { CreateRestaurantDto } from './dto/CreateRestaurantDto';
 import { UpdateRestaurantDto } from './dto/UpdateCatDto';
-import { Owner } from 'src/owners/schema/owner.schema';
+import { User } from 'src/owners/schema/owner.schema';
 import { Item } from 'src/items/schema/item.schema';
 
 @Injectable()
 export class RestaurantsService {
   constructor(
     @InjectModel(Restaurant.name) private resturantModel: Model<Restaurant>,
-    @InjectModel(Owner.name) private ownerModel: Model<Owner>,
+    @InjectModel(User.name) private ownerModel: Model<User>,
     @InjectModel(Item.name) private itemModel: Model<Item>
   ) { }
 
@@ -36,13 +36,13 @@ export class RestaurantsService {
     return restaurant
   }
 
-  async delete(id: string | Types.ObjectId): Promise<RestaurantDocument> {
+  async delete(id: Types.ObjectId): Promise<RestaurantDocument> {
     const restaurant = await this.resturantModel.findByIdAndDelete(id)
     if (!restaurant) throw new NotFoundException("Restaurant Not Found")
     const ownerId = restaurant.owner._id as string
     await this.resturantModel.findByIdAndUpdate(ownerId, { $pull: { restaurants: restaurant._id } })
-    await this.itemModel.deleteMany({ restaurant: id })
-    return restaurant;
+    await this.itemModel.deleteMany({ restaurant: id.toHexString() })
+    return
   }
 
 

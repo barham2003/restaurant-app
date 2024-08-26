@@ -1,23 +1,21 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import mongoose, { Types, HydratedDocument } from "mongoose";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Types, HydratedDocument } from 'mongoose';
 
-export type ItemDocument = HydratedDocument<Item>
+export type ItemDocument = HydratedDocument<Item>;
 
 @Schema()
 export class Item {
+  @Prop({ required: true })
+  name: string;
 
   @Prop({ required: true })
-  name: string
+  price: number;
 
   @Prop({ required: true })
-  price: number
+  image: string;
 
-  @Prop({ required: true })
-  image: string
-
-  @Prop({ type: Types.ObjectId, ref: "Restaurant" })
-  restaurant: Types.ObjectId
+  @Prop({ type: Types.ObjectId, ref: 'Restaurant' })
+  restaurant: Types.ObjectId;
 }
 
-
-export const ItemSchema = SchemaFactory.createForClass(Item)
+export const ItemSchema = SchemaFactory.createForClass(Item);

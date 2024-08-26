@@ -1,29 +1,24 @@
-import { Schema, Prop, SchemaFactory } from "@nestjs/mongoose";
-import { Document, HydratedDocument, Types } from "mongoose";
-import { Restaurant } from "src/restaurants/schema/restaurant.schema";
+import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
+import { Document, HydratedDocument, Types } from 'mongoose';
 
-export type OwnersDocument = HydratedDocument<Owner>
+export type UserDocument = HydratedDocument<User>;
 
 @Schema({ timestamps: true })
-export class Owner extends Document {
-
+export class User extends Document {
   @Prop({ required: true })
   username: string;
-
 
   @Prop({ required: true })
   password: string;
 
-
-  @Prop({ type: Types.ObjectId, ref: "Restaurant", })
-  restaurants: Types.ObjectId[]
-
+  @Prop({ type: Types.ObjectId, ref: 'Restaurant' })
+  restaurants: Types.ObjectId[];
 
   @Prop()
-  createdAt?: Date
+  createdAt?: Date;
 
   @Prop()
-  updatedAt?: Date
+  updatedAt?: Date;
 }
 
-export const OwnerSchema = SchemaFactory.createForClass(Owner);
+export const UserSchema = SchemaFactory.createForClass(User);

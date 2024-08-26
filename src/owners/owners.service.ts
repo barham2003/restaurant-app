@@ -3,12 +3,13 @@ import { CreateOwnerDto } from './dto/create-owner.dto';
 import { UpdateOwnerDto } from './dto/update-owner.dto';
 import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Owner } from './schema/owner.schema';
+import { User } from './schema/owner.schema';
+import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
 
 @Injectable()
 export class OwnersService {
   constructor(
-    @InjectModel(Owner.name) private ownersModel: Model<Owner>,
+    @InjectModel(User.name) private ownersModel: Model<User>,
   ) { }
   create(createOwnersDto: CreateOwnerDto) {
     const owners = this.ownersModel.create(createOwnersDto)
@@ -21,13 +22,15 @@ export class OwnersService {
   }
 
   async findOne(id: Types.ObjectId | string) {
-    const owners = await this.ownersModel.findById(id).populate("restaurants")
-    return owners
+    const owner = await this.ownersModel.findById(id).populate('restaurants')
+    if (!owner) throw new ExceptionsHandler()
+    return owner
   }
 
   async findOneByUsername(username: string) {
-    const owners = await this.ownersModel.findOne({ username }).populate("restaurants")
-    return owners
+    const owner = await this.ownersModel.findOne({ username }).populate("restaurants")
+    if (!owner) throw new ExceptionsHandler()
+    return owner
   }
 
   async addRestaurant(ownerId: Types.ObjectId | string, restaurantId: Types.ObjectId | string) {

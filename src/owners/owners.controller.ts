@@ -5,25 +5,27 @@ import { UpdateOwnerDto } from './dto/update-owner.dto';
 import { ParseObjId } from 'src/common/mongo-type.pipe';
 import { Types } from 'mongoose';
 import { ResponseData } from 'src/common/types';
-import { OwnersDocument } from './schema/owner.schema';
+import { UserDocument } from './schema/owner.schema';
+import { Public } from 'src/common/public-route.pipe';
 
 @Controller('owners')
 export class OwnersController {
   constructor(private readonly ownersService: OwnersService) { }
 
   @Post()
+  @Public()
   async create(@Body() createOwnersDto: CreateOwnerDto) {
     return await this.ownersService.create(createOwnersDto);
   }
 
   @Get()
-  async findAll(): ResponseData<OwnersDocument[]> {
+  async findAll(): ResponseData<UserDocument[]> {
     const owners = await this.ownersService.findAll();
     return { message: "Done", data: owners }
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseObjId) id: Types.ObjectId): ResponseData<OwnersDocument> {
+  async findOne(@Param('id', ParseObjId) id: Types.ObjectId): ResponseData<UserDocument> {
     const owner = await this.ownersService.findOne(id);
     return { message: "Found", data: owner }
   }

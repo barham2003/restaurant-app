@@ -9,11 +9,7 @@ export class CreateRestaurantDto {
   @IsNotEmpty()
   logo: string;
 
-
   @IsNotEmpty()
   @IsMongoId()
-  ownerId: string
-
-
-
+  ownerId: string;
 }

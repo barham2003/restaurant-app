@@ -14,27 +14,36 @@ export class ItemsService {
   ) { }
 
   async create(createItemDto: CreateItemDto) {
-    const isExist = await this.restaurantModel.findById(createItemDto.restaurantId)
-    console.log(isExist)
-    if (!isExist) throw new NotFoundException("Restaurant not found")
-    const item = await this.itemModel.create({ ...createItemDto, restaurant: createItemDto.restaurantId })
-    await this.restaurantModel.findByIdAndUpdate(createItemDto.restaurantId, { $push: { items: item._id } })
-    return item
+    const isExist = await this.restaurantModel.findById(
+      createItemDto.restaurantId,
+    );
+    console.log(isExist);
+    if (!isExist) throw new NotFoundException('Restaurant not found');
+    const item = await this.itemModel.create({
+      ...createItemDto,
+      restaurant: createItemDto.restaurantId,
+    });
+    await this.restaurantModel.findByIdAndUpdate(createItemDto.restaurantId, {
+      $push: { items: item._id },
+    });
+    return item;
   }
 
   async findAll() {
-    return await this.itemModel.find()
+    return await this.itemModel.find();
   }
 
   async findOne(id: string | Types.ObjectId) {
-    return await this.itemModel.findById(id).populate("restaurant", ["name", "logo"])
+    return await this.itemModel
+      .findById(id)
+      .populate('restaurant', ['name', 'logo']);
   }
 
   async update(id: string | Types.ObjectId, updateItemDto: UpdateItemDto) {
-    return await this.itemModel.findByIdAndUpdate(id, updateItemDto)
+    return await this.itemModel.findByIdAndUpdate(id, updateItemDto);
   }
 
   async remove(id: string | Types.ObjectId) {
-    return await this.itemModel.findByIdAndDelete(id)
+    return await this.itemModel.findByIdAndDelete(id);
   }
 }

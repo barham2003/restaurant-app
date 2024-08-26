@@ -1,17 +1,22 @@
-import { IsMongoId, IsNotEmpty, IsNumberString, IsString } from "class-validator";
+import {
+  IsMongoId,
+  IsNotEmpty,
+  IsNumberString,
+  IsString,
+} from 'class-validator';
 
 export class CreateItemDto {
   @IsNotEmpty()
-  name: string
+  name: string;
 
   @IsNumberString()
-  price: string
+  price: string;
 
   @IsNotEmpty()
   @IsString()
-  image: string
+  image: string;
 
   @IsNotEmpty()
   @IsMongoId()
-  restaurantId: string
+  restaurantId: string;
 }

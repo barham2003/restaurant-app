@@ -9,13 +9,13 @@ import { ItemsModule } from './items/items.module';
 import { AuthService } from './auth/auth.service';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './auth/auth.guard';
 
 @Module({
   imports: [
     RestaurantsModule,
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
+    ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -26,9 +26,13 @@ import { JwtModule } from '@nestjs/jwt';
     OwnersModule,
     ItemsModule,
     AuthModule,
-    JwtModule
+    JwtModule,
   ],
   controllers: [AppController],
-  providers: [AppService, AuthService],
+  providers: [
+    AppService,
+    AuthService,
+    { useClass: AuthGuard, provide: APP_GUARD },
+  ],
 })
 export class AppModule { }

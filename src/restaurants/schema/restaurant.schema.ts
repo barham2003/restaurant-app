@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 import { Item } from 'src/items/schema/item.schema';
-import { Owner } from 'src/owners/schema/owner.schema';
+import { User } from 'src/owners/schema/owner.schema';
 
 export type RestaurantDocument = HydratedDocument<Restaurant>;
 
@@ -14,7 +14,7 @@ export class Restaurant {
   logo: string;
 
   @Prop({ type: Types.ObjectId, ref: "Owner", required: true })
-  owner: Owner;
+  owner: User;
 
   @Prop({ type: Types.ObjectId, ref: Item.name })
   items: Types.ObjectId[]
