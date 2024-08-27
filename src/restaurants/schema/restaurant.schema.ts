@@ -13,11 +13,11 @@ export class Restaurant {
   @Prop({ required: true })
   logo: string;
 
-  @Prop({ type: Types.ObjectId, ref: "Owner", required: true })
-  owner: User;
+  @Prop({ type: Types.ObjectId, ref: User.name, required: true })
+  user: User;
 
   @Prop({ type: Types.ObjectId, ref: Item.name })
-  items: Types.ObjectId[]
+  items: Types.ObjectId[];
 
   @Prop()
   createdAt?: Date;
@@ -26,8 +26,6 @@ export class Restaurant {
   updatedAt?: Date;
 }
 
-const unPreparedSchema = SchemaFactory.createForClass(Restaurant)
+const unPreparedSchema = SchemaFactory.createForClass(Restaurant);
 
-
-export const RestaurantSchema = unPreparedSchema
-
+export const RestaurantSchema = unPreparedSchema;

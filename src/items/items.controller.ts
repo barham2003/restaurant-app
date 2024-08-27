@@ -18,7 +18,7 @@ import { Public } from 'src/common/public-route.pipe';
 
 @Controller('items')
 export class ItemsController {
-  constructor(private readonly itemsService: ItemsService) { }
+  constructor(private readonly itemsService: ItemsService) {}
 
   @Post()
   async create(

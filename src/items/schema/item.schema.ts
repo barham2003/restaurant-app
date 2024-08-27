@@ -8,6 +8,12 @@ export class Item {
   @Prop({ required: true })
   name: string;
 
+  @Prop({ type: Object, required: false })
+  otherLanguages: {
+    kurdish: string;
+    arabic: string;
+  };
+
   @Prop({ required: true })
   price: number;
 

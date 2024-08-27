@@ -11,7 +11,7 @@ export class ItemsService {
   constructor(
     @InjectModel(Item.name) private itemModel: Model<Item>,
     @InjectModel(Restaurant.name) private restaurantModel: Model<Restaurant>,
-  ) { }
+  ) {}
 
   async create(createItemDto: CreateItemDto) {
     const isExist = await this.restaurantModel.findById(

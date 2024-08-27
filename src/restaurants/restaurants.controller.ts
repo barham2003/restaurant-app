@@ -17,39 +17,44 @@ import { UpdateRestaurantDto } from './dto/UpdateCatDto';
 import { ResponseData } from 'src/common/types';
 import { Types } from 'mongoose';
 
-
 @Controller('restaurants')
 export class RestaurantsController {
-  constructor(private readonly resturantsService: RestaurantsService,
-  ) { }
+  constructor(private readonly resturantsService: RestaurantsService) {}
 
   @Get()
   async findAll(): ResponseData<RestaurantDocument[]> {
-    const data = await this.resturantsService.getAll()
-    return { data, message: "Successfully Found" };
+    const data = await this.resturantsService.getAll();
+    return { data, message: 'Successfully Found' };
   }
 
   @Get('/:id')
-  async findOne(@Param('id', ParseObjId) id: Types.ObjectId): ResponseData<any> {
+  async findOne(
+    @Param('id', ParseObjId) id: Types.ObjectId,
+  ): ResponseData<any> {
     const restaurant = await this.resturantsService.getOne(id);
-    if (restaurant === undefined || !restaurant) throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
+    if (restaurant === undefined || !restaurant)
+      throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
 
-    return { message: "Successfully Found", data: restaurant };
+    return { message: 'Successfully Found', data: restaurant };
   }
 
-
   @Post()
-  async addRestaurant(@Body() createRestaurantDto: CreateRestaurantDto): ResponseData<RestaurantDocument> {
+  async addRestaurant(
+    @Body() createRestaurantDto: CreateRestaurantDto,
+  ): ResponseData<RestaurantDocument> {
     const restaurant = await this.resturantsService.create(createRestaurantDto);
-    if (!restaurant) throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
+    if (!restaurant)
+      throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
     return { message: 'Successfully Created', data: restaurant };
   }
 
   @Delete('/:id')
-  async deleteRestaurant(@Param('id', ParseObjId) id: Types.ObjectId): ResponseData<null> {
+  async deleteRestaurant(
+    @Param('id', ParseObjId) id: Types.ObjectId,
+  ): ResponseData<null> {
     const result = await this.resturantsService.delete(id);
     if (!result) throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
-    return { message: 'Successfully Deleted', };
+    return { message: 'Successfully Deleted' };
   }
 
   @Put('/:id')
@@ -59,6 +64,6 @@ export class RestaurantsController {
   ): ResponseData<null> {
     const result = await this.resturantsService.edit(id, updateRestaurantDto);
     if (!result) throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
-    return { message: 'Successfully Updated', };
+    return { message: 'Successfully Updated' };
   }
 }

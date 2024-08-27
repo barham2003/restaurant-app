@@ -8,7 +8,7 @@ import { HttpAdapterHost } from '@nestjs/core';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
-  constructor(private readonly httpAdapterHost: HttpAdapterHost) { }
+  constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
   catch(exception: unknown, host: ArgumentsHost): void {
     // In certain situations `httpAdapter` might not be available in the
@@ -17,15 +17,13 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     const ctx = host.switchToHttp();
 
-
-    const exceptionResponse = exception instanceof HttpException
-      ? exception.getResponse()
-      : exception;
+    const exceptionResponse =
+      exception instanceof HttpException ? exception.getResponse() : exception;
 
     const responseBody = {
-      error: exceptionResponse
+      error: exceptionResponse,
     };
 
-    httpAdapter.reply(ctx.getResponse(), responseBody,);
+    httpAdapter.reply(ctx.getResponse(), responseBody);
   }
 }

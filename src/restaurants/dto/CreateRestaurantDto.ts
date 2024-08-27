@@ -11,5 +11,5 @@ export class CreateRestaurantDto {
 
   @IsNotEmpty()
   @IsMongoId()
-  ownerId: string;
+  userId: string;
 }

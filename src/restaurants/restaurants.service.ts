@@ -11,8 +11,8 @@ import { Item } from 'src/items/schema/item.schema';
 export class RestaurantsService {
   constructor(
     @InjectModel(Restaurant.name) private resturantModel: Model<Restaurant>,
-    @InjectModel(User.name) private ownerModel: Model<User>,
-    @InjectModel(Item.name) private itemModel: Model<Item>
+    @InjectModel(User.name) private userModel: Model<User>,
+    @InjectModel(Item.name) private itemModel: Model<Item>,
   ) { }
 
   async getAll() {
@@ -20,36 +20,36 @@ export class RestaurantsService {
   }
 
   async getOne(id: Types.ObjectId | string) {
-    const restaurant = await this.resturantModel.findById(id).populate({
-      path: "items",
-      select: ["name", "price"],
-
-    }).exec()
-    return restaurant
+    const restaurant = await this.resturantModel
+      .findById(id)
+      .populate(['user',],)
+      .exec();
+    return restaurant;
   }
 
   async create(createRestaurantDto: CreateRestaurantDto) {
-    const owner = await this.ownerModel.findById(createRestaurantDto.ownerId)
-    if (!owner) throw new NotFoundException('Owner not found',)
-    const restaurant = await this.resturantModel.create({ ...createRestaurantDto, owner: createRestaurantDto.ownerId });
-    await this.ownerModel.findByIdAndUpdate(owner._id, { $push: { restaurants: restaurant._id } });
-    return restaurant
+    console.log(createRestaurantDto)
+    const user = await this.userModel.findById(createRestaurantDto.userId);
+    if (!user) throw new NotFoundException('User not found');
+    const restaurant = await this.resturantModel.create({ ...createRestaurantDto, user: createRestaurantDto.userId });
+
+    await this.userModel.findByIdAndUpdate(user._id, { $push: { restaurants: restaurant._id }, });
+
+    return restaurant;
   }
 
   async delete(id: Types.ObjectId): Promise<RestaurantDocument> {
-    const restaurant = await this.resturantModel.findByIdAndDelete(id)
-    if (!restaurant) throw new NotFoundException("Restaurant Not Found")
-    const ownerId = restaurant.owner._id as string
-    await this.resturantModel.findByIdAndUpdate(ownerId, { $pull: { restaurants: restaurant._id } })
-    await this.itemModel.deleteMany({ restaurant: id.toHexString() })
-    return
+    const restaurant = await this.resturantModel.findByIdAndDelete(id);
+    if (!restaurant) throw new NotFoundException('Restaurant Not Found');
+    const userId = restaurant.user._id as string;
+    await this.resturantModel.findByIdAndUpdate(userId, { $pull: { restaurants: restaurant._id }, });
+    await this.itemModel.deleteMany({ restaurant: id.toHexString() });
+    return;
   }
 
-
-
   async edit(id: string, updateRestaurantDto: UpdateRestaurantDto) {
-    const data = await this.resturantModel.findByIdAndUpdate(id, updateRestaurantDto).populate("owner",);
+    const data = await this.resturantModel.findByIdAndUpdate(id, updateRestaurantDto)
     if (!data) throw new NotFoundException('Restaurant Not Found');
-    return data
+    return data;
   }
 }

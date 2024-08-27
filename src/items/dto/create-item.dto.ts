@@ -19,4 +19,9 @@ export class CreateItemDto {
   @IsNotEmpty()
   @IsMongoId()
   restaurantId: string;
+
+  otherLanguages: {
+    kurdish: string;
+    arabic: string;
+  };
 }

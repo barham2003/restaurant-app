@@ -8,69 +8,59 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schema/user.schema';
-import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
+import { Public } from 'src/common/public-route.pipe';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private ownersModel: Model<User>) { }
-  create(createOwnersDto: CreateUserDto) {
-    const owners = this.ownersModel.create(createOwnersDto);
-    return owners;
+  constructor(@InjectModel(User.name) private usersModel: Model<User>) { }
+  create(createUsersDto: CreateUserDto) {
+    const user = this.usersModel.create(createUsersDto);
+    return user;
   }
 
   async findAll() {
-    const owners = await this.ownersModel.find();
-    return owners;
+    const users = await this.usersModel.find();
+    return users;
   }
 
-  async findOne(id: Types.ObjectId | string) {
-    const owner = await this.ownersModel.findById(id).populate('restaurants');
-    if (!owner) throw new ExceptionsHandler();
-    return owner;
+  @Public()
+  async findOneById(id: Types.ObjectId | string) {
+    const user = await this.usersModel.findById(id)
+    if (!user) throw new NotFoundException();
+    return user;
   }
 
   async findOneByUsername(username: string) {
-    const owner = await this.ownersModel
+    const user = await this.usersModel
       .findOne({ username })
       .populate('restaurants');
-    if (!owner) throw new ExceptionsHandler();
-    return owner;
+    if (!user) throw new NotFoundException();
+    return user;
   }
 
-  async addRestaurant(
-    ownerId: Types.ObjectId | string,
-    restaurantId: Types.ObjectId | string,
-  ) {
-    await this.ownersModel.findByIdAndUpdate(
-      ownerId,
-      { $push: { restaurants: restaurantId } },
-      { new: true, runValidators: true },
-    );
-  }
 
   async deleteRestaurant(
-    ownerId: Types.ObjectId | string,
+    userId: Types.ObjectId | string,
     restaurantId: Types.ObjectId | string,
   ) {
-    await this.ownersModel.findByIdAndUpdate(ownerId, {
+    await this.usersModel.findByIdAndUpdate(userId, {
       $pull: { restaurants: restaurantId },
     });
   }
 
-  async update(id: Types.ObjectId | string, updateOwnersDto: UpdateUserDto) {
-    const updatedOne = await this.ownersModel.findByIdAndUpdate(
+  async update(id: Types.ObjectId | string, updateUsersDto: UpdateUserDto) {
+    const updatedOne = await this.usersModel.findByIdAndUpdate(
       id,
-      updateOwnersDto,
+      updateUsersDto,
     );
     return updatedOne;
   }
 
-  async remove(id: Types.ObjectId | string) {
-    const deletedOne = await this.ownersModel.findById(id);
+  async remove(id: Types.ObjectId) {
+    const deletedOne = await this.usersModel.findById(id);
     if (!deletedOne) throw new NotFoundException();
-    if (deletedOne.restaurants.length > 0)
-      throw new BadRequestException('Delete All his Restaurants First');
-    await this.ownersModel.findById(id);
+    if (deletedOne.restaurants.length > 0) throw new BadRequestException('Delete All his Restaurants First');
+    await this.usersModel.findOneAndDelete({ _id: id.toHexString() });
     return deletedOne;
   }
 }
