@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   NotFoundException,
-  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -16,16 +15,8 @@ import { ParseObjId } from 'src/common/mongo-type.pipe';
 import { Types } from 'mongoose';
 import { ResponseData } from 'src/common/types';
 import { UserDocument } from './schema/user.schema';
-import { Roles } from 'src/roles/roles.decorator';
-import { Role } from 'src/roles/roles.enum';
-import { AuthGuard } from 'src/auth/auth.guard';
-import { RolesGuard } from 'src/roles/roles.guard';
-import { Public } from 'src/common/public-route.pipe';
 
 @Controller('users')
-@UseGuards(AuthGuard)
-@UseGuards(RolesGuard)
-@Roles(Role.Admin)
 export class usersController {
   constructor(private readonly ownersService: UsersService) { }
 

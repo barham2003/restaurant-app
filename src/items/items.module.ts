@@ -7,6 +7,7 @@ import {
   Restaurant,
   RestaurantSchema,
 } from 'src/restaurants/schema/restaurant.schema';
+import { RestaurantsModule } from 'src/restaurants/restaurants.module';
 
 @Module({
   controllers: [ItemsController],
@@ -16,6 +17,7 @@ import {
       { name: Item.name, schema: ItemSchema },
       { name: Restaurant.name, schema: RestaurantSchema },
     ]),
+    RestaurantsModule
   ],
 })
-export class ItemsModule {}
+export class ItemsModule { }

@@ -19,11 +19,13 @@ export class RestaurantsService {
     return await this.resturantModel.find();
   }
 
-  async getOne(id: Types.ObjectId | string) {
+  async findOne(id: Types.ObjectId | string) {
     const restaurant = await this.resturantModel
       .findById(id)
-      .populate(['user',],)
+      .populate(['user'])
       .exec();
+
+    if (!restaurant) throw new NotFoundException('Restaurant Not Found');
     return restaurant;
   }
 

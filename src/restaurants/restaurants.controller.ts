@@ -19,7 +19,7 @@ import { Types } from 'mongoose';
 
 @Controller('restaurants')
 export class RestaurantsController {
-  constructor(private readonly resturantsService: RestaurantsService) {}
+  constructor(private readonly resturantsService: RestaurantsService) { }
 
   @Get()
   async findAll(): ResponseData<RestaurantDocument[]> {
@@ -31,7 +31,7 @@ export class RestaurantsController {
   async findOne(
     @Param('id', ParseObjId) id: Types.ObjectId,
   ): ResponseData<any> {
-    const restaurant = await this.resturantsService.getOne(id);
+    const restaurant = await this.resturantsService.findOne(id);
     if (restaurant === undefined || !restaurant)
       throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
 

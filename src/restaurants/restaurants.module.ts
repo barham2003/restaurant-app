@@ -19,5 +19,6 @@ import { User, UserSchema } from 'src/users/schema/user.schema';
   ],
   controllers: [RestaurantsController],
   providers: [RestaurantsService],
+  exports: [RestaurantsService],
 })
-export class RestaurantsModule {}
+export class RestaurantsModule { }
