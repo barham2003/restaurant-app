@@ -10,11 +10,19 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schema/user.schema';
 import { Public } from 'src/common/public-route.pipe';
 
+
+import * as bcrypt from 'bcrypt';
+const salt = 10;
+
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private usersModel: Model<User>) { }
-  create(createUsersDto: CreateUserDto) {
-    const user = this.usersModel.create(createUsersDto);
+  async create(createUsersDto: CreateUserDto) {
+
+    const originalPassword = createUsersDto.password;
+    const hashPassword = await bcrypt.hash(originalPassword, salt);
+
+    const user = await this.usersModel.create({ ...createUsersDto, password: hashPassword });
     return user;
   }
 
@@ -45,10 +53,7 @@ export class UsersService {
   }
 
   async update(id: string, updateUsersDto: UpdateUserDto) {
-    const updatedOne = await this.usersModel.findByIdAndUpdate(
-      id,
-      updateUsersDto,
-    );
+    const updatedOne = await this.usersModel.findByIdAndUpdate(id, updateUsersDto,);
     return updatedOne;
   }
 

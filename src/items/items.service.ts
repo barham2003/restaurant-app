@@ -13,7 +13,7 @@ export class ItemsService {
     @InjectModel(Restaurant.name) private restaurantModel: Model<Restaurant>,
   ) { }
 
-  async create(createItemDto: CreateItemDto,) {
+  async create(createItemDto: CreateItemDto) {
     const isExist = await this.restaurantModel.findById(
       createItemDto.restaurantId,
     );
@@ -32,24 +32,26 @@ export class ItemsService {
     return await this.itemModel.find();
   }
 
-
   async findOne(id: string | Types.ObjectId) {
     const item = await this.itemModel
       .findById(id)
       .populate('restaurant', ['name', 'logo', 'user']);
     if (!item) throw new NotFoundException('Item not found');
-    return item
+    return item;
   }
 
   async update(id: string | Types.ObjectId, updateItemDto: UpdateItemDto) {
-    const updatedItem = await this.itemModel.findByIdAndUpdate(id, updateItemDto);
+    const updatedItem = await this.itemModel.findByIdAndUpdate(
+      id,
+      updateItemDto,
+    );
     if (!updatedItem) throw new NotFoundException('Item not found');
-    return updatedItem
+    return updatedItem;
   }
 
   async remove(id: string | Types.ObjectId) {
     const item = await this.itemModel.findByIdAndDelete(id);
     if (!item) throw new NotFoundException();
-    return item
+    return item;
   }
 }

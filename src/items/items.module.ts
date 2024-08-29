@@ -17,7 +17,7 @@ import { RestaurantsModule } from 'src/restaurants/restaurants.module';
       { name: Item.name, schema: ItemSchema },
       { name: Restaurant.name, schema: RestaurantSchema },
     ]),
-    RestaurantsModule
+    RestaurantsModule,
   ],
 })
-export class ItemsModule { }
+export class ItemsModule {}
