@@ -3,6 +3,7 @@ import { ItemsService } from './items.service';
 import { RestaurantsService } from 'src/restaurants/restaurants.service';
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from 'src/common/public-route.pipe';
+import { Role } from 'src/roles/roles.enum';
 
 @Injectable()
 export class UserItemOwnerShip implements CanActivate {
@@ -22,6 +23,8 @@ export class UserItemOwnerShip implements CanActivate {
 
     const user = request.user;
     if (!isPublic && !user) return false;
+
+    if (user.role === Role.Admin) return true;
 
     const itemId = request.params.id;
     if (itemId) {

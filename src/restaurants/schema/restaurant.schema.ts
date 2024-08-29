@@ -26,6 +26,4 @@ export class Restaurant {
   updatedAt?: Date;
 }
 
-const unPreparedSchema = SchemaFactory.createForClass(Restaurant);
-
-export const RestaurantSchema = unPreparedSchema;
+export const RestaurantSchema = SchemaFactory.createForClass(Restaurant);

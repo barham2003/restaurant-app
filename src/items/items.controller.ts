@@ -1,6 +1,5 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
   Patch,
@@ -27,14 +26,6 @@ export class ItemsController {
   ): ResponseData<ItemDocument> {
     const item = await this.itemsService.create(createItemDto);
     return { message: 'Successfully created', data: item };
-  }
-
-  @Get(':id')
-  async findOne(
-    @Param('id', ParseObjId) id: string,
-  ): ResponseData<ItemDocument> {
-    const item = await this.itemsService.findOne(id);
-    return { data: item, message: 'Found' };
   }
 
   @Patch(':id')

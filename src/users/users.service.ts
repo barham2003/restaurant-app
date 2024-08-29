@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schema/user.schema';
 import { Public } from 'src/common/public-route.pipe';
@@ -24,8 +24,8 @@ export class UsersService {
   }
 
   @Public()
-  async findOneById(id: Types.ObjectId | string) {
-    const user = await this.usersModel.findById(id)
+  async findOneById(id: string) {
+    const user = await this.usersModel.findById(id);
     if (!user) throw new NotFoundException();
     return user;
   }
@@ -38,17 +38,13 @@ export class UsersService {
     return user;
   }
 
-
-  async deleteRestaurant(
-    userId: Types.ObjectId | string,
-    restaurantId: Types.ObjectId | string,
-  ) {
+  async deleteRestaurant(userId: string, restaurantId: string) {
     await this.usersModel.findByIdAndUpdate(userId, {
       $pull: { restaurants: restaurantId },
     });
   }
 
-  async update(id: Types.ObjectId | string, updateUsersDto: UpdateUserDto) {
+  async update(id: string, updateUsersDto: UpdateUserDto) {
     const updatedOne = await this.usersModel.findByIdAndUpdate(
       id,
       updateUsersDto,
@@ -56,11 +52,12 @@ export class UsersService {
     return updatedOne;
   }
 
-  async remove(id: Types.ObjectId) {
+  async remove(id: string) {
     const deletedOne = await this.usersModel.findById(id);
     if (!deletedOne) throw new NotFoundException();
-    if (deletedOne.restaurants.length > 0) throw new BadRequestException('Delete All his Restaurants First');
-    await this.usersModel.findOneAndDelete({ _id: id.toHexString() });
+    if (deletedOne?.restaurants?.length > 0)
+      throw new BadRequestException('Delete All his Restaurants First');
+    await this.usersModel.findOneAndDelete({ _id: id });
     return deletedOne;
   }
 }
