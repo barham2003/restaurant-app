@@ -1,7 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadGatewayException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Restaurant, RestaurantDocument } from './schema/restaurant.schema';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { CreateRestaurantDto } from './dto/CreateRestaurantDto';
 import { UpdateRestaurantDto } from './dto/UpdateCatDto';
 import { User } from 'src/users/schema/user.schema';
@@ -48,6 +52,7 @@ export class RestaurantsService {
       $push: { restaurants: restaurant._id },
     });
 
+    if (!restaurant) throw new BadGatewayException('Something went wrong');
     return restaurant;
   }
 

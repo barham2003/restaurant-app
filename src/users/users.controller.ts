@@ -13,8 +13,6 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ParseObjId } from 'src/common/mongo-type.pipe';
-import { ResponseData } from 'src/common/types';
-import { UserDocument } from './schema/user.schema';
 import { RolesGuard } from 'src/roles/roles.guard';
 import { Roles } from 'src/roles/roles.decorator';
 import { Role } from 'src/roles/roles.enum';
@@ -23,40 +21,39 @@ import { Role } from 'src/roles/roles.enum';
 @UseGuards(RolesGuard)
 @Roles(Role.Admin)
 export class usersController {
-  constructor(private readonly ownersService: UsersService) { }
+  constructor(private readonly ownersService: UsersService) {}
 
   @Post()
   async create(@Body() createOwnersDto: CreateUserDto) {
-    return await this.ownersService.create(createOwnersDto);
+    const user = await this.ownersService.create(createOwnersDto);
+    return user;
   }
 
   @Get()
-  async findAll(): ResponseData<UserDocument[]> {
+  async findAll() {
     const owners = await this.ownersService.findAll();
-    return { message: 'Done', data: owners };
+    return owners;
   }
 
   @Get(':id')
-  async findOne(
-    @Param('id', ParseObjId) id: string,
-  ): ResponseData<UserDocument> {
-    const owner = await this.ownersService.findOneById(id);
-    return { message: 'Found', data: owner };
+  async findOne(@Param('id', ParseObjId) id: string) {
+    const user = await this.ownersService.findOneById(id);
+    return user;
   }
 
   @Patch(':id')
   async update(
     @Param('id', ParseObjId) id: string,
     @Body() updateOwnersDto: UpdateUserDto,
-  ): ResponseData<null> {
+  ) {
     const isFound = await this.ownersService.update(id, updateOwnersDto);
     if (!isFound) throw new NotFoundException();
-    return { message: 'Updated' };
+    return 'Updated';
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string): ResponseData<null> {
+  async remove(@Param('id') id: string) {
     await this.ownersService.remove(id);
-    return { message: 'Deleted' };
+    return 'Deleted';
   }
 }

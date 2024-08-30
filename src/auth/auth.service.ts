@@ -11,8 +11,7 @@ export class AuthService {
   ) {}
 
   async signin(username: string, pass: string): Promise<any> {
-    const owner = await this.ownerService.findOneByUsername(username);
-
+    const owner = await this.ownerService.findOneByUsername(username, true);
     // if not found owner throw error
     if (!owner) throw new NotFoundException();
 

@@ -17,7 +17,7 @@ export class AuthGuard implements CanActivate {
     private jwtService: JwtService,
     private reflector: Reflector,
     private usersService: UsersService,
-  ) { }
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const isPublic = this.reflector.getAllAndOverride(IS_PUBLIC_KEY, [
@@ -38,7 +38,6 @@ export class AuthGuard implements CanActivate {
 
       const userId = payload.id;
       const user = await this.usersService.findOneById(userId);
-      user.password = undefined;
       req['user'] = user;
     } catch (e) {
       console.error(e);

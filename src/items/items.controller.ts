@@ -11,37 +11,31 @@ import { ItemsService } from './items.service';
 import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
 import { ParseObjId } from 'src/common/mongo-type.pipe';
-import { ResponseData } from 'src/common/types';
-import { ItemDocument } from './schema/item.schema';
 import { UserItemOwnerShip } from './item-ownership.guard';
 
 @Controller('items')
 @UseGuards(UserItemOwnerShip)
 export class ItemsController {
-  constructor(private readonly itemsService: ItemsService) { }
+  constructor(private readonly itemsService: ItemsService) {}
 
   @Post()
-  async create(
-    @Body() createItemDto: CreateItemDto,
-  ): ResponseData<ItemDocument> {
+  async create(@Body() createItemDto: CreateItemDto) {
     const item = await this.itemsService.create(createItemDto);
-    return { message: 'Successfully created', data: item };
+    return item;
   }
 
   @Patch(':id')
   async update(
     @Param('id', ParseObjId) id: string,
     @Body() updateItemDto: UpdateItemDto,
-  ): ResponseData<ItemDocument> {
+  ) {
     const updatedItem = await this.itemsService.update(id, updateItemDto);
-    return { data: updatedItem, message: 'Updated' };
+    return 'Item successfuly updated';
   }
 
   @Delete(':id')
-  async remove(
-    @Param('id', ParseObjId) id: string,
-  ): ResponseData<ItemDocument> {
+  async remove(@Param('id', ParseObjId) id: string) {
     const item = await this.itemsService.remove(id);
-    return { data: item, message: 'Successfully Deleted' };
+    return 'Item successfuly deleted';
   }
 }
