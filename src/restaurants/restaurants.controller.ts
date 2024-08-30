@@ -3,26 +3,28 @@ import {
   Controller,
   Delete,
   Get,
-  HttpException,
-  HttpStatus,
   Param,
+  Patch,
   Post,
   Put,
   UseGuards,
 } from '@nestjs/common';
 import { RestaurantsService } from './restaurants.service';
 import { ParseObjId } from 'src/common/mongo-type.pipe';
-import { CreateRestaurantDto } from './dto/CreateRestaurantDto';
-import { UpdateRestaurantDto } from './dto/UpdateCatDto';
+import { CreateRestaurantDto } from './dto/CreateRestaurant.dto';
+import { UpdateRestaurantDto } from './dto/UpdateCat.dto';
 import { Roles } from 'src/roles/roles.decorator';
 import { Role } from 'src/roles/roles.enum';
 import { RolesGuard } from 'src/roles/roles.guard';
 import { Public } from 'src/common/public-route.pipe';
+import { DeleteCategoryDto } from './dto/DeleteCategory.dto';
+import { AddCategoryDto } from './dto/AddCategory.dto';
+import { RestaurantOwnerShip } from './restaurant-ownership.guard';
 
 @Controller('restaurants')
 @UseGuards(RolesGuard)
 export class RestaurantsController {
-  constructor(private readonly resturantsService: RestaurantsService) { }
+  constructor(private readonly resturantsService: RestaurantsService) {}
 
   @Get()
   @Roles(Role.Admin)
@@ -55,8 +57,7 @@ export class RestaurantsController {
   @Delete('/:id')
   @Roles(Role.Admin)
   async deleteRestaurant(@Param('id', ParseObjId) id: string) {
-    const result = await this.resturantsService.delete(id);
-    if (!result) throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
+    await this.resturantsService.delete(id);
     return 'Successfully Deleted';
   }
 
@@ -66,8 +67,31 @@ export class RestaurantsController {
     @Param('id', ParseObjId) id: string,
     @Body() updateRestaurantDto: UpdateRestaurantDto,
   ) {
-    const result = await this.resturantsService.edit(id, updateRestaurantDto);
-    if (!result) throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
-    return 'Successfully Updated';
+    await this.resturantsService.edit(id, updateRestaurantDto);
+    return 'Successfully updated';
+  }
+
+  @Patch('/:id/categories')
+  @UseGuards(RestaurantOwnerShip)
+  async addCategory(
+    @Param('id', ParseObjId) restaurantId: string,
+    @Body() newCategoryDto: AddCategoryDto,
+  ) {
+    await this.resturantsService.addCategory(restaurantId, newCategoryDto);
+    return `${newCategoryDto.name} added successfuly`;
+  }
+
+  @Delete('/:id/categories')
+  @UseGuards(RestaurantOwnerShip)
+  async deleteCategory(
+    @Param('id', ParseObjId) restaurantId: string,
+    @Body() deleteCategoryDto: DeleteCategoryDto,
+  ) {
+    await this.resturantsService.deleteCategory(
+      restaurantId,
+      deleteCategoryDto.name,
+    );
+
+    return 'Deleted category successfuly';
   }
 }

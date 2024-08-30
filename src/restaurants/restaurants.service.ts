@@ -1,15 +1,17 @@
 import {
   BadGatewayException,
+  HttpException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Restaurant, RestaurantDocument } from './schema/restaurant.schema';
 import { Model } from 'mongoose';
-import { CreateRestaurantDto } from './dto/CreateRestaurantDto';
-import { UpdateRestaurantDto } from './dto/UpdateCatDto';
+import { CreateRestaurantDto } from './dto/CreateRestaurant.dto';
+import { UpdateRestaurantDto } from './dto/UpdateCat.dto';
 import { User } from 'src/users/schema/user.schema';
 import { Item } from 'src/items/schema/item.schema';
+import { AddCategoryDto } from './dto/AddCategory.dto';
 
 @Injectable()
 export class RestaurantsService {
@@ -17,7 +19,7 @@ export class RestaurantsService {
     @InjectModel(Restaurant.name) private resturantModel: Model<Restaurant>,
     @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel(Item.name) private itemModel: Model<Item>,
-  ) { }
+  ) {}
 
   async getAll() {
     return await this.resturantModel.find();
@@ -40,6 +42,42 @@ export class RestaurantsService {
     return items;
   }
 
+  async addCategory(restaurantId: string, newCategoryDto: AddCategoryDto) {
+    const updatedRestaurant: RestaurantDocument =
+      await this.resturantModel.findById(restaurantId);
+    if (!updatedRestaurant) throw new NotFoundException('Restaurant not found');
+
+    const isCategoryAvailable = updatedRestaurant.categories.find(
+      (category) => category.name === newCategoryDto.name,
+    );
+
+    if (isCategoryAvailable)
+      throw new HttpException({ message: 'Duplicate Category' }, 400);
+
+    updatedRestaurant.categories.push(newCategoryDto);
+    await updatedRestaurant.save();
+  }
+
+  async deleteCategory(restaurantId: string, toDeleteCategory: string) {
+    const updatedRestaurant: RestaurantDocument =
+      await this.resturantModel.findById(restaurantId);
+
+    if (!updatedRestaurant) throw new NotFoundException('Restaurant not found');
+
+    updatedRestaurant.categories = updatedRestaurant.categories.filter(
+      (category) => category.name !== toDeleteCategory,
+    );
+
+    await updatedRestaurant.save();
+  }
+
+  async getCategories(restaurantId: string) {
+    const restaurant = await this.resturantModel.findById(restaurantId);
+    if (!restaurant) throw new NotFoundException('Restaurant not found');
+    const categories = restaurant.categories;
+    return categories;
+  }
+
   async create(createRestaurantDto: CreateRestaurantDto) {
     const user = await this.userModel.findById(createRestaurantDto.userId);
     if (!user) throw new NotFoundException('User not found');
@@ -56,15 +94,16 @@ export class RestaurantsService {
     return restaurant;
   }
 
-  async delete(id: string): Promise<RestaurantDocument> {
+  async delete(id: string): Promise<void> {
     const restaurant = await this.resturantModel.findByIdAndDelete(id);
     if (!restaurant) throw new NotFoundException('Restaurant Not Found');
-    const userId = restaurant.user._id as string;
-    await this.resturantModel.findByIdAndUpdate(userId, {
+
+    const userId = restaurant.user;
+    await this.userModel.findByIdAndUpdate(userId, {
       $pull: { restaurants: restaurant._id },
     });
+
     await this.itemModel.deleteMany({ restaurant: id });
-    return;
   }
 
   async edit(id: string, updateRestaurantDto: UpdateRestaurantDto) {
@@ -73,6 +112,5 @@ export class RestaurantsService {
       updateRestaurantDto,
     );
     if (!data) throw new NotFoundException('Restaurant Not Found');
-    return data;
   }
 }

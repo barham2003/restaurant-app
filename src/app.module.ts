@@ -36,4 +36,4 @@ import { ValidationPipe } from '@nestjs/common';
     { useClass: HttpExceptionFilter, provide: APP_FILTER },
   ],
 })
-export class AppModule { }
+export class AppModule {}

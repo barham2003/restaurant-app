@@ -29,13 +29,13 @@ export class ItemsController {
     @Param('id', ParseObjId) id: string,
     @Body() updateItemDto: UpdateItemDto,
   ) {
-    const updatedItem = await this.itemsService.update(id, updateItemDto);
+    await this.itemsService.update(id, updateItemDto);
     return 'Item successfuly updated';
   }
 
   @Delete(':id')
   async remove(@Param('id', ParseObjId) id: string) {
-    const item = await this.itemsService.remove(id);
+    await this.itemsService.remove(id);
     return 'Item successfuly deleted';
   }
 }

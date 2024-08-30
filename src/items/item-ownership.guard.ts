@@ -1,4 +1,9 @@
-import { CanActivate, ExecutionContext, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { ItemsService } from './items.service';
 import { RestaurantsService } from 'src/restaurants/restaurants.service';
 import { Reflector } from '@nestjs/core';
@@ -11,7 +16,7 @@ export class UserItemOwnerShip implements CanActivate {
     private itemService: ItemsService,
     private restaurantService: RestaurantsService,
     private reflector: Reflector,
-  ) { }
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();

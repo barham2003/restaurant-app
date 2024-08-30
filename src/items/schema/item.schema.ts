@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types, HydratedDocument } from 'mongoose';
+import { OtherLanguages } from 'src/otherLanguages/otherLanguages.schema';
 
 export type ItemDocument = HydratedDocument<Item>;
 
@@ -8,11 +9,8 @@ export class Item {
   @Prop({ required: true })
   name: string;
 
-  @Prop({ type: Object, required: false })
-  otherLanguages: {
-    kurdish: string;
-    arabic: string;
-  };
+  @Prop({ type: OtherLanguages, required: true })
+  otherLanguages: OtherLanguages;
 
   @Prop({ required: true })
   price: number;

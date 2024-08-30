@@ -2,8 +2,18 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 import { Item } from 'src/items/schema/item.schema';
 import { User } from 'src/users/schema/user.schema';
+import { OtherLanguages } from 'src/otherLanguages/otherLanguages.schema';
 
 export type RestaurantDocument = HydratedDocument<Restaurant>;
+
+@Schema()
+class Category {
+  @Prop({ required: true })
+  name: string;
+
+  @Prop({ required: true, type: OtherLanguages })
+  otherLanguages: OtherLanguages;
+}
 
 @Schema()
 export class Restaurant {
@@ -18,6 +28,12 @@ export class Restaurant {
 
   @Prop({ type: Types.ObjectId, ref: Item.name })
   items: Types.ObjectId[];
+
+  @Prop({
+    type: [Category],
+    default: [],
+  })
+  categories: Category[];
 
   @Prop()
   createdAt?: Date;
