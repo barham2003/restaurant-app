@@ -2,8 +2,8 @@ import { IsString } from 'class-validator';
 
 export class OtherLanguagesDto {
   @IsString()
-  kurdish: string;
+  ku: string;
 
   @IsString()
-  arabic: string;
+  ar: string;
 }

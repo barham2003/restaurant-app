@@ -3,8 +3,8 @@ import { Schema, Prop } from '@nestjs/mongoose';
 @Schema()
 export class OtherLanguages {
   @Prop()
-  kurdish: string;
+  ku: string;
 
   @Prop()
-  arabic: string;
+  ar: string;
 }
