@@ -15,11 +15,10 @@ const salt = 10;
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private usersModel: Model<User>) {}
+  constructor(@InjectModel(User.name) private usersModel: Model<User>) { }
   async create(createUsersDto: CreateUserDto) {
     const originalPassword = createUsersDto.password;
     const hashPassword = await bcrypt.hash(originalPassword, salt);
-
     const user = await this.usersModel.create({
       ...createUsersDto,
       password: hashPassword,

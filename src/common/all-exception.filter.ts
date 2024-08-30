@@ -8,27 +8,25 @@ import { HttpAdapterHost } from '@nestjs/core';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
-  constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
+  constructor(private readonly httpAdapterHost: HttpAdapterHost) { }
 
   catch(exception: unknown, host: ArgumentsHost): void {
+    console.log(exception);
+
     const { httpAdapter } = this.httpAdapterHost;
 
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
-    const request = ctx.getRequest();
-
-    //console.log();
-    if (exception['code'] === 11000) {
-    }
-
-    const statusCode =
-      exception instanceof HttpException ? exception.getStatus() : 500;
 
     let message = '';
+    let statusCode = 500;
+
     if (exception['code'] === 11000) {
-      console.log(exception);
       message = 'duplicate field';
+      statusCode = 409;
     } else {
+      statusCode =
+        exception instanceof HttpException ? exception.getStatus() : 500;
       message =
         exception instanceof HttpException
           ? (exception.getResponse() as any).message || exception.message
@@ -37,6 +35,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const responseBody = {
       statusCode,
       message,
+      success: false,
     };
 
     httpAdapter.reply(response, responseBody, statusCode);

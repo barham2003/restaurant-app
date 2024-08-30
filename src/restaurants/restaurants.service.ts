@@ -1,5 +1,6 @@
 import {
   BadGatewayException,
+  ConflictException,
   HttpException,
   Injectable,
   NotFoundException,
@@ -19,7 +20,7 @@ export class RestaurantsService {
     @InjectModel(Restaurant.name) private resturantModel: Model<Restaurant>,
     @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel(Item.name) private itemModel: Model<Item>,
-  ) {}
+  ) { }
 
   async getAll() {
     return await this.resturantModel.find();
@@ -51,8 +52,7 @@ export class RestaurantsService {
       (category) => category.name === newCategoryDto.name,
     );
 
-    if (isCategoryAvailable)
-      throw new HttpException({ message: 'Duplicate Category' }, 400);
+    if (isCategoryAvailable) throw new ConflictException('Duplicate Category');
 
     updatedRestaurant.categories.push(newCategoryDto);
     await updatedRestaurant.save();

@@ -38,4 +38,4 @@ import { AllExceptionsFilter } from './common/all-exception.filter';
     { useClass: AllExceptionsFilter, provide: APP_FILTER },
   ],
 })
-export class AppModule {}
+export class AppModule { }

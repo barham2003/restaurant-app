@@ -2,9 +2,9 @@ import { Schema, Prop } from '@nestjs/mongoose';
 
 @Schema()
 export class OtherLanguages {
-  @Prop({ required: true })
+  @Prop()
   kurdish: string;
 
-  @Prop({ required: true })
+  @Prop()
   arabic: string;
 }
