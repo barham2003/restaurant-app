@@ -12,6 +12,7 @@ import { HttpExceptionFilter } from './common/http-exception.filter';
 import { AuthGuard } from './auth/auth.guard';
 import { SetResponseInterceptor } from './common/response.interceptor';
 import { ValidationPipe } from '@nestjs/common';
+import { AllExceptionsFilter } from './common/all-exception.filter';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { ValidationPipe } from '@nestjs/common';
     { useClass: SetResponseInterceptor, provide: APP_INTERCEPTOR },
     { useClass: ValidationPipe, provide: APP_PIPE },
     { useClass: HttpExceptionFilter, provide: APP_FILTER },
+    { useClass: AllExceptionsFilter, provide: APP_FILTER },
   ],
 })
 export class AppModule {}

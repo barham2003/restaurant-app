@@ -20,6 +20,9 @@ export class Item {
 
   @Prop({ type: Types.ObjectId, ref: 'Restaurant' })
   restaurant: Types.ObjectId;
+
+  @Prop({ type: String, required: true })
+  category: string;
 }
 
 export const ItemSchema = SchemaFactory.createForClass(Item);

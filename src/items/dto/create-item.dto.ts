@@ -30,4 +30,8 @@ export class CreateItemDto {
   @ValidateNested()
   @Type(() => OtherLanguagesDto)
   otherLanguages: OtherLanguagesDto;
+
+  @IsString()
+  @IsNotEmpty()
+  category: string;
 }
