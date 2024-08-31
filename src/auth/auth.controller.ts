@@ -13,7 +13,7 @@ import { Public } from 'src/common/public-route.pipe';
 
 @Controller('/auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   @HttpCode(HttpStatus.OK)
   @Public()

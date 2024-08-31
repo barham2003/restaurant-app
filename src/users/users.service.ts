@@ -43,7 +43,7 @@ export class UsersService {
       .findOne({ username })
       .populate('restaurants')
       .select(withPassword ? '+password' : '');
-    if (!user) throw new NotFoundException();
+    if (!user) throw new NotFoundException('user not found');
     return user;
   }
 
