@@ -13,6 +13,7 @@ import { UpdateRestaurantDto } from './dto/UpdateCat.dto';
 import { User } from 'src/users/schema/user.schema';
 import { Item } from 'src/items/schema/item.schema';
 import { AddCategoryDto } from './dto/AddCategory.dto';
+import { OtherLanguages } from 'src/otherLanguages/otherLanguages.schema';
 
 @Injectable()
 export class RestaurantsService {
@@ -64,8 +65,8 @@ export class RestaurantsService {
     const groupedItems = categories.map(category => {
       return {
         items: items.filter((item) => item.category === category.name),
-        category
-
+        name: category.name,
+        otherLanguages: category.otherLanguages
       }
     })
 

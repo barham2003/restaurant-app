@@ -78,6 +78,14 @@ export class RestaurantsController {
     return 'Successfully updated';
   }
 
+  @Get('/:id/categories')
+  @Public()
+  async getCategories(
+    @Param('id', ParseObjId) restaurantId: string,
+  ) {
+    return await this.resturantsService.getCategories(restaurantId);
+  }
+
   @Patch('/:id/categories')
   @UseGuards(RestaurantOwnerShip)
   async addCategory(

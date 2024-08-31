@@ -6,6 +6,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Put,
 } from '@nestjs/common';
 import { ItemsService } from './items.service';
 import { CreateItemDto } from './dto/create-item.dto';
@@ -16,7 +17,7 @@ import { UserItemOwnerShip } from './item-ownership.guard';
 @Controller('items')
 @UseGuards(UserItemOwnerShip)
 export class ItemsController {
-  constructor(private readonly itemsService: ItemsService) {}
+  constructor(private readonly itemsService: ItemsService) { }
 
   @Post()
   async create(@Body() createItemDto: CreateItemDto) {
@@ -24,7 +25,7 @@ export class ItemsController {
     return item;
   }
 
-  @Patch(':id')
+  @Put(':id')
   async update(
     @Param('id', ParseObjId) id: string,
     @Body() updateItemDto: UpdateItemDto,
