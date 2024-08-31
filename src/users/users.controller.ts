@@ -16,14 +16,16 @@ import { ParseObjId } from 'src/common/mongo-type.pipe';
 import { RolesGuard } from 'src/roles/roles.guard';
 import { Roles } from 'src/roles/roles.decorator';
 import { Role } from 'src/roles/roles.enum';
+import { Public } from 'src/common/public-route.pipe';
 
 @Controller('users')
 @UseGuards(RolesGuard)
 @Roles(Role.Admin)
 export class usersController {
-  constructor(private readonly ownersService: UsersService) {}
+  constructor(private readonly ownersService: UsersService) { }
 
   @Post()
+  @Public()
   async create(@Body() createOwnersDto: CreateUserDto) {
     const user = await this.ownersService.create(createOwnersDto);
     return user;

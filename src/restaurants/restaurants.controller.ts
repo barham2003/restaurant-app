@@ -24,7 +24,7 @@ import { RestaurantOwnerShip } from './restaurant-ownership.guard';
 @Controller('restaurants')
 @UseGuards(RolesGuard)
 export class RestaurantsController {
-  constructor(private readonly resturantsService: RestaurantsService) {}
+  constructor(private readonly resturantsService: RestaurantsService) { }
 
   @Get()
   @Roles(Role.Admin)
@@ -44,6 +44,13 @@ export class RestaurantsController {
   @Public()
   async findRestaurantItems(@Param('id', ParseObjId) id: string) {
     const items = await this.resturantsService.findRestaurantItems(id);
+    return items;
+  }
+
+  @Get('/:id/grouped-items')
+  @Public()
+  async getGroupedItems(@Param('id', ParseObjId) id: string) {
+    const items = await this.resturantsService.getItemsGrouped(id);
     return items;
   }
 

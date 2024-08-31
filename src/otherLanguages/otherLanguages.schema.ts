@@ -7,4 +7,7 @@ export class OtherLanguages {
 
   @Prop()
   ar: string;
+
+  @Prop()
+  en: string;
 }

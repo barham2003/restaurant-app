@@ -26,8 +26,8 @@ export class Restaurant {
   @Prop({ type: Types.ObjectId, ref: User.name, required: true })
   user: User;
 
-  @Prop({ type: Types.ObjectId, ref: Item.name })
-  items: Types.ObjectId[];
+  @Prop({ type: [Types.ObjectId], ref: Item.name })
+  items: Types.ObjectId[] | Item[];
 
   @Prop({
     type: [Category],
@@ -41,5 +41,10 @@ export class Restaurant {
   @Prop()
   updatedAt?: Date;
 }
-
 export const RestaurantSchema = SchemaFactory.createForClass(Restaurant);
+
+RestaurantSchema.pre('findOne', function () {
+  this.populate('items');
+});
+
+

@@ -6,4 +6,7 @@ export class OtherLanguagesDto {
 
   @IsString()
   ar: string;
+
+  @IsString()
+  en: string;
 }

@@ -28,8 +28,8 @@ export class RestaurantsService {
 
   async findOne(id: string) {
     const restaurant = await this.resturantModel
-      .findById(id)
-      .populate(['user'])
+      .findOne({ _id: id })
+      .populate('items')
       .exec();
 
     if (!restaurant) throw new NotFoundException('Restaurant Not Found');
@@ -57,6 +57,21 @@ export class RestaurantsService {
     updatedRestaurant.categories.push(newCategoryDto);
     await updatedRestaurant.save();
   }
+
+  async getItemsGrouped(restaurantId: string) {
+    const items = await this.itemModel.find({ restaurant: restaurantId });
+    const categories = await this.getCategories(restaurantId)
+    const groupedItems = categories.map(category => {
+      return {
+        items: items.filter((item) => item.category === category.name),
+        category
+
+      }
+    })
+
+    return groupedItems
+  }
+
 
   async deleteCategory(restaurantId: string, toDeleteCategory: string) {
     const updatedRestaurant: RestaurantDocument =
