@@ -14,7 +14,7 @@ export class RestaurantOwnerShip implements CanActivate {
   constructor(
     private reflector: Reflector,
     private restaurantService: RestaurantsService,
-  ) {}
+  ) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest();

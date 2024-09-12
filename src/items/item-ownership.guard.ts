@@ -16,7 +16,7 @@ export class UserItemOwnerShip implements CanActivate {
     private itemService: ItemsService,
     private restaurantService: RestaurantsService,
     private reflector: Reflector,
-  ) {}
+  ) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -45,7 +45,6 @@ export class UserItemOwnerShip implements CanActivate {
     if (restaurantId) {
       const restaurant = await this.restaurantService.findOne(restaurantId);
       if (!restaurant) throw new NotFoundException('restaurant not found');
-
       if (restaurant.user._id.toString() === user._id.toString()) return true;
       else return false;
     }

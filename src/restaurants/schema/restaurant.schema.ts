@@ -7,7 +7,7 @@ import { OtherLanguages } from 'src/otherLanguages/otherLanguages.schema';
 export type RestaurantDocument = HydratedDocument<Restaurant>;
 
 @Schema()
-class Category {
+export class Category {
   @Prop({ required: true })
   name: string;
 
@@ -26,7 +26,7 @@ export class Restaurant {
   @Prop({ type: Types.ObjectId, ref: User.name, required: true })
   user: User;
 
-  @Prop({ type: [Types.ObjectId], ref: Item.name })
+  @Prop({ type: [Types.ObjectId], ref: Item.name, select: false })
   items: Types.ObjectId[] | Item[];
 
   @Prop({
@@ -41,10 +41,15 @@ export class Restaurant {
   @Prop()
   updatedAt?: Date;
 }
+
 export const RestaurantSchema = SchemaFactory.createForClass(Restaurant);
+RestaurantSchema.methods.findByUserId = function (this: any, userId: string) {
+  return this.findOne({ user: userId });
+};
 
 RestaurantSchema.pre('findOne', function () {
-  this.populate('items');
+  if (this.getFilter()._id) {
+    // When triggered findOneById
+    this.populate('items');
+  }
 });
-
-

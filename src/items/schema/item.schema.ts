@@ -1,10 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types, HydratedDocument } from 'mongoose';
 import { OtherLanguages } from 'src/otherLanguages/otherLanguages.schema';
+import { Category } from 'src/restaurants/schema/restaurant.schema';
 
 export type ItemDocument = HydratedDocument<Item>;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Item {
   @Prop({ required: true })
   name: string;
@@ -21,8 +22,14 @@ export class Item {
   @Prop({ type: Types.ObjectId, ref: 'Restaurant' })
   restaurant: Types.ObjectId;
 
-  @Prop({ type: String, required: true })
-  category: string;
+  @Prop({ type: Object, required: true })
+  category: Category;
+
+  @Prop({ type: Date, default: new Date() })
+  cratedAt?: Date
+
+  @Prop({ type: Date, default: new Date() })
+  updatedAt?: Date
 }
 
 export const ItemSchema = SchemaFactory.createForClass(Item);

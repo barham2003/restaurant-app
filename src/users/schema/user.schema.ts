@@ -12,8 +12,8 @@ export class User extends Document {
   @Prop({ required: true, select: false })
   password: string;
 
-  @Prop({ type: Types.ObjectId, ref: 'Restaurant', default: [] })
-  restaurants: Types.ObjectId[];
+  @Prop({ type: Types.ObjectId, ref: 'Restaurant', default: null })
+  restaurant: Types.ObjectId
 
   @Prop({ type: String, default: Role.User })
   role: string;

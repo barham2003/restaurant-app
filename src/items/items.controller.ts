@@ -2,7 +2,6 @@ import {
   Controller,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   UseGuards,

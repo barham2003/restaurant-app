@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   Put,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { RestaurantsService } from './restaurants.service';
@@ -20,6 +21,7 @@ import { Public } from 'src/common/public-route.pipe';
 import { DeleteCategoryDto } from './dto/DeleteCategory.dto';
 import { AddCategoryDto } from './dto/AddCategory.dto';
 import { RestaurantOwnerShip } from './restaurant-ownership.guard';
+import { Request } from 'express';
 
 @Controller('restaurants')
 @UseGuards(RolesGuard)
@@ -31,6 +33,15 @@ export class RestaurantsController {
   async findAll() {
     const data = await this.resturantsService.getAll();
     return data;
+  }
+
+  @Get('/me')
+  async findMyRestaurant(@Req() req: Request) {
+    // @ts-expect-error user object
+    const userId = req.user._id.toString();
+
+    const restaurant = await this.resturantsService.findOneByUserId(userId);
+    return restaurant;
   }
 
   @Get('/:id')
@@ -80,13 +91,11 @@ export class RestaurantsController {
 
   @Get('/:id/categories')
   @Public()
-  async getCategories(
-    @Param('id', ParseObjId) restaurantId: string,
-  ) {
+  async getCategories(@Param('id', ParseObjId) restaurantId: string) {
     return await this.resturantsService.getCategories(restaurantId);
   }
 
-  @Patch('/:id/categories')
+  @Post('/:id/categories')
   @UseGuards(RestaurantOwnerShip)
   async addCategory(
     @Param('id', ParseObjId) restaurantId: string,
@@ -96,17 +105,13 @@ export class RestaurantsController {
     return `${newCategoryDto.name} added successfuly`;
   }
 
-  @Delete('/:id/categories')
+  @Delete(':id/categories/:name')
   @UseGuards(RestaurantOwnerShip)
   async deleteCategory(
     @Param('id', ParseObjId) restaurantId: string,
-    @Body() deleteCategoryDto: DeleteCategoryDto,
+    @Param('name') categoryName: string,
   ) {
-    await this.resturantsService.deleteCategory(
-      restaurantId,
-      deleteCategoryDto.name,
-    );
-
+    await this.resturantsService.deleteCategory(restaurantId, categoryName);
     return 'Deleted category successfuly';
   }
 }

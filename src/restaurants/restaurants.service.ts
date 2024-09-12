@@ -1,7 +1,7 @@
 import {
   BadGatewayException,
+  BadRequestException,
   ConflictException,
-  HttpException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -13,7 +13,6 @@ import { UpdateRestaurantDto } from './dto/UpdateCat.dto';
 import { User } from 'src/users/schema/user.schema';
 import { Item } from 'src/items/schema/item.schema';
 import { AddCategoryDto } from './dto/AddCategory.dto';
-import { OtherLanguages } from 'src/otherLanguages/otherLanguages.schema';
 
 @Injectable()
 export class RestaurantsService {
@@ -29,10 +28,16 @@ export class RestaurantsService {
 
   async findOne(id: string) {
     const restaurant = await this.resturantModel
-      .findOne({ _id: id })
-      .populate('items')
+      .findById({ _id: id })
+      .populate(['items', 'user'])
       .exec();
 
+    if (!restaurant) throw new NotFoundException('Restaurant Not Found');
+    return restaurant;
+  }
+
+  async findOneByUserId(userId: string) {
+    const restaurant = await this.resturantModel.findOne({ user: userId });
     if (!restaurant) throw new NotFoundException('Restaurant Not Found');
     return restaurant;
   }
@@ -40,7 +45,7 @@ export class RestaurantsService {
   async findRestaurantItems(id: string) {
     const isExist = await this.resturantModel.findById(id);
     if (!isExist) throw new NotFoundException('Restaurant Not Found');
-    const items = await this.itemModel.find({ restaurant: id });
+    const items = await this.itemModel.find({ restaurant: id }).sort({ createdAt: -1 });
     return items;
   }
 
@@ -60,23 +65,21 @@ export class RestaurantsService {
   }
 
   async getItemsGrouped(restaurantId: string) {
-    const items = await this.itemModel.find({ restaurant: restaurantId });
-    const categories = await this.getCategories(restaurantId)
-    const groupedItems = categories.map(category => {
+    const items = await this.itemModel.find({ restaurant: restaurantId })
+    const categories = await this.getCategories(restaurantId);
+    const groupedItems = categories.map((category) => {
       return {
-        items: items.filter((item) => item.category === category.name),
+        items: items.filter((item) => item.category.name === category.name),
         name: category.name,
-        otherLanguages: category.otherLanguages
-      }
-    })
+        otherLanguages: category.otherLanguages,
+      };
+    });
 
-    return groupedItems
+    return groupedItems;
   }
 
-
   async deleteCategory(restaurantId: string, toDeleteCategory: string) {
-    const updatedRestaurant: RestaurantDocument =
-      await this.resturantModel.findById(restaurantId);
+    const updatedRestaurant: RestaurantDocument = await this.resturantModel.findById(restaurantId);
 
     if (!updatedRestaurant) throw new NotFoundException('Restaurant not found');
 
@@ -102,11 +105,12 @@ export class RestaurantsService {
       user: createRestaurantDto.userId,
     });
 
-    await this.userModel.findByIdAndUpdate(user._id, {
-      $push: { restaurants: restaurant._id },
-    });
+    if (user.restaurant)
+      throw new BadRequestException('user already has a restaurant');
+    user.restaurant = restaurant._id;
 
     if (!restaurant) throw new BadGatewayException('Something went wrong');
+    await user.save();
     return restaurant;
   }
 
@@ -115,9 +119,7 @@ export class RestaurantsService {
     if (!restaurant) throw new NotFoundException('Restaurant Not Found');
 
     const userId = restaurant.user;
-    await this.userModel.findByIdAndUpdate(userId, {
-      $pull: { restaurants: restaurant._id },
-    });
+    await this.userModel.findByIdAndUpdate(userId, { restaurant: null });
 
     await this.itemModel.deleteMany({ restaurant: id });
   }
