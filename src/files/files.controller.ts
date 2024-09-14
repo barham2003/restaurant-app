@@ -13,29 +13,34 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { createReadStream } from 'fs';
 import { diskStorage } from 'multer';
+import { join } from 'path';
+import { StreamFile } from 'src/common/file-check.pipe';
 import { Public } from 'src/common/public-route.pipe';
 
-@Controller('file')
-export class FileController {
+@Controller('files')
+export class FilesController {
   @Get(':name')
   @Public()
-  getFile(@Res() res: Response, @Param('name') name: string) {
+  @StreamFile()
+  async getFile(@Param('name') name: string, @Res({ passthrough: true }) res: Response) {
     const dirname = process.cwd();
-    const file = `${dirname}/images/${name}`;
+    const fileDir = join(dirname, 'files-dir', name)
     try {
-      const fileStream = createReadStream(file);
-      return new StreamableFile(fileStream);
+      const file = createReadStream(fileDir);
+      return new StreamableFile(file, {
+        type: 'image/png',
+      });
     } catch (e) {
-      console.log(e);
-      throw new NotFoundException();
+      console.log(e)
+      throw new NotFoundException("File not found");
     }
   }
 
-  @Post('upload')
+  @Post()
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
-        destination: './images',
+        destination: './files-dir',
         filename: (req, file, cb) => {
           const uniqueSuffix =
             Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -47,13 +52,13 @@ export class FileController {
   )
   async uploadFile(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
-      throw new Error('File upload failed');
+      throw new NotFoundException('File upload failed');
     }
 
     return {
       message: 'File uploaded successfully',
       filename: file.filename,
-      url: `localhost:3000/uploads/${file.filename}`, // Adjust this to your actual URL structure
+      url: `http://localhost:3000/files/${file.filename}`, // Adjust this to your actual URL structure
     };
   }
 }

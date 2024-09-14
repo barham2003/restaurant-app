@@ -13,7 +13,7 @@ import { AuthGuard } from './auth/auth.guard';
 import { SetResponseInterceptor } from './common/response.interceptor';
 import { ValidationPipe } from '@nestjs/common';
 import { AllExceptionsFilter } from './common/all-exception.filter';
-import { FileController } from './file/file.controller';
+import { FilesModule } from './files/files.module';
 
 @Module({
   imports: [
@@ -29,6 +29,7 @@ import { FileController } from './file/file.controller';
     UsersModule,
     ItemsModule,
     AuthModule,
+    FilesModule,
     JwtModule,
   ],
   providers: [
@@ -38,6 +39,5 @@ import { FileController } from './file/file.controller';
     { useClass: HttpExceptionFilter, provide: APP_FILTER },
     { useClass: AllExceptionsFilter, provide: APP_FILTER },
   ],
-  controllers: [FileController],
 })
 export class AppModule { }
