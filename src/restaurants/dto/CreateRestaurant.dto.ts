@@ -1,4 +1,4 @@
-import { IsMongoId, IsNotEmpty, IsString } from 'class-validator';
+import { IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateRestaurantDto {
   @IsString()
@@ -12,4 +12,17 @@ export class CreateRestaurantDto {
   @IsNotEmpty()
   @IsMongoId()
   userId: string;
+
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  color: string;
+
+  @IsOptional()
+  @IsString()
+  facebook?: string
+
+  @IsOptional()
+  @IsString()
+  instagram?: string
 }

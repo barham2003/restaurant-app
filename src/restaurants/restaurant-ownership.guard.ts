@@ -24,11 +24,14 @@ export class RestaurantOwnerShip implements CanActivate {
     ]);
     if (isPublic) return true;
 
+    // If not user return false
     const user = req.user;
     if (!user) return false;
 
+    // if it was admin return true
     if (user.role === Role.Admin) return true;
 
+    // const get restaurantId from request
     const restaurantId = req.params.id;
 
     if (restaurantId) {

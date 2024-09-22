@@ -13,6 +13,11 @@ export class AddCategoryDto {
   @IsNotEmpty()
   name: string;
 
+
+  @IsString()
+  @IsNotEmpty()
+  image: string
+
   @IsDefined()
   @IsNotEmptyObject()
   @ValidateNested()

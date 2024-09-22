@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   Param,
-  Patch,
   Post,
   Put,
   Req,
@@ -18,7 +17,6 @@ import { Roles } from 'src/roles/roles.decorator';
 import { Role } from 'src/roles/roles.enum';
 import { RolesGuard } from 'src/roles/roles.guard';
 import { Public } from 'src/common/public-route.pipe';
-import { DeleteCategoryDto } from './dto/DeleteCategory.dto';
 import { AddCategoryDto } from './dto/AddCategory.dto';
 import { RestaurantOwnerShip } from './restaurant-ownership.guard';
 import { Request } from 'express';
@@ -80,10 +78,11 @@ export class RestaurantsController {
   }
 
   @Put('/:id')
-  @Roles(Role.Admin)
+  @UseGuards(RestaurantOwnerShip)
   async editResturant(
     @Param('id', ParseObjId) id: string,
     @Body() updateRestaurantDto: UpdateRestaurantDto,
+
   ) {
     await this.resturantsService.edit(id, updateRestaurantDto);
     return 'Successfully updated';

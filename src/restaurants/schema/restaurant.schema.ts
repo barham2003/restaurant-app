@@ -11,6 +11,9 @@ export class Category {
   @Prop({ required: true })
   name: string;
 
+  @Prop({ required: true })
+  image: string;
+
   @Prop({ required: true, type: OtherLanguages })
   otherLanguages: OtherLanguages;
 }
@@ -23,6 +26,10 @@ export class Restaurant {
   @Prop({ required: true })
   logo: string;
 
+
+  @Prop({ default: '#000000' })
+  color: string
+
   @Prop({ type: Types.ObjectId, ref: User.name, required: true })
   user: User;
 
@@ -34,6 +41,14 @@ export class Restaurant {
     default: [],
   })
   categories: Category[];
+
+
+  @Prop({ required: false })
+  instagram?: string
+
+  @Prop({ required: false })
+  facebook?: string
+
 
   @Prop()
   createdAt?: Date;
@@ -50,6 +65,6 @@ RestaurantSchema.methods.findByUserId = function (this: any, userId: string) {
 RestaurantSchema.pre('findOne', function () {
   if (this.getFilter()._id) {
     // When triggered findOneById
-    this.populate('items');
+    //this.populate('items');
   }
 });

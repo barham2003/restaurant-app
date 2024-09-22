@@ -11,7 +11,7 @@ import { Model } from 'mongoose';
 import { CreateRestaurantDto } from './dto/CreateRestaurant.dto';
 import { UpdateRestaurantDto } from './dto/UpdateCat.dto';
 import { User } from 'src/users/schema/user.schema';
-import { Item } from 'src/items/schema/item.schema';
+import { Item, ItemDocument } from 'src/items/schema/item.schema';
 import { AddCategoryDto } from './dto/AddCategory.dto';
 
 @Injectable()
@@ -22,27 +22,23 @@ export class RestaurantsService {
     @InjectModel(Item.name) private itemModel: Model<Item>,
   ) { }
 
-  async getAll() {
+  async getAll(): Promise<RestaurantDocument[]> {
     return await this.resturantModel.find();
   }
 
-  async findOne(id: string) {
-    const restaurant = await this.resturantModel
-      .findById({ _id: id })
-      .populate(['items', 'user'])
-      .exec();
-
+  async findOne(id: string): Promise<RestaurantDocument> {
+    const restaurant = await this.resturantModel.findById({ _id: id }).populate("user")
     if (!restaurant) throw new NotFoundException('Restaurant Not Found');
     return restaurant;
   }
 
-  async findOneByUserId(userId: string) {
+  async findOneByUserId(userId: string): Promise<RestaurantDocument> {
     const restaurant = await this.resturantModel.findOne({ user: userId });
     if (!restaurant) throw new NotFoundException('Restaurant Not Found');
     return restaurant;
   }
 
-  async findRestaurantItems(id: string) {
+  async findRestaurantItems(id: string): Promise<ItemDocument[]> {
     const isExist = await this.resturantModel.findById(id);
     if (!isExist) throw new NotFoundException('Restaurant Not Found');
     const items = await this.itemModel.find({ restaurant: id }).sort({ createdAt: -1 });
@@ -50,8 +46,7 @@ export class RestaurantsService {
   }
 
   async addCategory(restaurantId: string, newCategoryDto: AddCategoryDto) {
-    const updatedRestaurant: RestaurantDocument =
-      await this.resturantModel.findById(restaurantId);
+    const updatedRestaurant: RestaurantDocument = await this.resturantModel.findById(restaurantId);
     if (!updatedRestaurant) throw new NotFoundException('Restaurant not found');
 
     const isCategoryAvailable = updatedRestaurant.categories.find(
@@ -69,7 +64,7 @@ export class RestaurantsService {
     const categories = await this.getCategories(restaurantId);
     const groupedItems = categories.map((category) => {
       return {
-        items: items.filter((item) => item.category.name === category.name),
+        items: items.filter((item: ItemDocument): boolean => item.category.name === category.name),
         name: category.name,
         otherLanguages: category.otherLanguages,
       };

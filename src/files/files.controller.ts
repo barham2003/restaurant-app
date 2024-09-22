@@ -4,13 +4,11 @@ import {
   NotFoundException,
   Param,
   Post,
-  Res,
   StreamableFile,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Response } from 'express';
 import { createReadStream } from 'fs';
 import { diskStorage } from 'multer';
 import { join } from 'path';
@@ -22,17 +20,17 @@ export class FilesController {
   @Get(':name')
   @Public()
   @StreamFile()
-  async getFile(@Param('name') name: string, @Res({ passthrough: true }) res: Response) {
+  async getFile(@Param('name') name: string) {
     const dirname = process.cwd();
-    const fileDir = join(dirname, 'files-dir', name)
+    const fileDir = join(dirname, 'files-dir', name);
     try {
       const file = createReadStream(fileDir);
       return new StreamableFile(file, {
         type: 'image/png',
       });
     } catch (e) {
-      console.log(e)
-      throw new NotFoundException("File not found");
+      console.log(e);
+      throw new NotFoundException('File not found');
     }
   }
 
@@ -50,15 +48,17 @@ export class FilesController {
       }),
     }),
   )
-  async uploadFile(@UploadedFile() file: Express.Multer.File) {
+  async uploadFile(@UploadedFile() file: Express.Multer.File): Promise<any> {
     if (!file) {
       throw new NotFoundException('File upload failed');
     }
 
+    const domain = process.env.DOMAIN;
+
     return {
       message: 'File uploaded successfully',
       filename: file.filename,
-      url: `http://localhost:3000/files/${file.filename}`, // Adjust this to your actual URL structure
+      url: `${domain}/files/${file.filename}`, // Adjust this to your actual URL structure
     };
   }
 }
