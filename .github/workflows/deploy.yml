@@ -31,14 +31,11 @@ jobs:
       - name: Install step
         run: "npm install"
 
-      - name: Build step
-        run: "deno task start"
-
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
         with:
           project: "restaurant-backendd"
-          entrypoint: "./"
+          entrypoint: "deno task start"
           root: ""
           
           
