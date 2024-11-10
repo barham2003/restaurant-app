@@ -18,7 +18,7 @@ import { FilesModule } from './files/files.module';
 @Module({
   imports: [
     RestaurantsModule,
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -40,4 +40,4 @@ import { FilesModule } from './files/files.module';
     { useClass: AllExceptionsFilter, provide: APP_FILTER },
   ],
 })
-export class AppModule { }
+export class AppModule {}
